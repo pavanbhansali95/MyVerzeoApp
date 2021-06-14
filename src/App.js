@@ -3,140 +3,38 @@ import './App.css';
 import React from 'react';
 import Person from './Components/Person';
 import {useState,useEffect} from 'react';
-
-
-//class based component
-
-//inheritence.
-
-//jsx -> Javscript structuted xml
-
-//props -> what you pass in your component
-
-//state is coming which can be changed anywhere
-
-//conditinal stateents
-//whenver state or prop changes for a componennt, that component will rerender.
-
-//containers statebasedcomponents
-
-// class App extends React.Component {
-//   //component initialization -> state and props are initialized
-
-//   constructor(props){
-//     console.log('iside constructor App.js---');
-    
-//     super(props);
-//     this.state = {
-//      'personName': 'Roy',
-
-
-//   };
-// }
-
-// //mounting
-
-// //this is used for modifying the props
-// static getDerivedStateFromProps(props,state){
-//   console.log('inside getderivedstate from props App.js--')
-// }
-
-// //performace optimization
-// shouldComponentUpdate(nextProps,nextSate){
-//   console.log('inside shouldcomp update next state---',nextSate,);
-//   console.log('inside shouldcomp update pevious state---',this.state);
-
-//   return true;
-// }
-
-
-// nameChangedHandler = (event) => {
-//   const newName = event.target.value;
-//   this.setState({'personName': newName})
-// }
-
-// getSnapshotBeforeUpdate(prevProps,prevState){
-//   console.log('getsnapshotbeforeupdate--');
-//   return {'name': 'pavan'};
-// }
+import { Route, Switch } from 'react-router';
+import { Link } from 'react-router-dom';
+import { AppBar, Button, IconButton, Toolbar, Typography } from '@material-ui/core';
+import Header from './Components/Header';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Cockpit from './Components/Cockpit';
+import {
+  FormBuilder,
+  FieldGroup,
+  FieldControl,
+  Validators
+} from "react-reactive-form";
 
 
 
-
-
-
-
-// //bind -> what is apply ,call,bind (mdn docs)
-// //Two way binding
-// //map opeartor in js??
-// //filter opeartor -> task for the day
-// //passing info from child to parent component
-// //component updation
-// //mounting
-
-
-
-//   render(){
-
-//     console.log('App.js render--');
-
- 
-//     return (
-//       <div>
-//        <Person inputChange={this.nameChangedHandler} />
-//     <p>Person name is {this.state.personName} </p>
-
-//       </div>
-//     )
-  
-
-
-// }
-
-// //will be called only once when your component is created
-// componentDidMount(){
-//   console.log('Componentdidmount--App.js');
-//   //THis will be used for making API Calls
-// }
-
-// //used for making Api calls
-
-// componentDidUpdate(prevProps,prevState,snapshot){
-// console.log('inside omponentdid update--',snapshot);
-// }
-
-// //clearing memory and clearing subsciptions.
-// componentWillUnmount(){
-
-// }
-
-
-
-//   }
-
-//functional components or stateless components
-
-//function component is a function which will return jsx
-//useEffect -> React Hook
+//uncontrlled components
+//we will be using refs
 
 const App = (props) => {
-  const [personName,setPersonName] = useState('Joey');
-  const [personAge,setPersonAge] = useState(25);
-  const [showPerson,setShowPerson] = useState(false);
 
-  //works like componentdidmount.
-  //the function inside useffect is called effect.
-  //THis will be called only once on app component render
-  //[]-> dependency
-  // useEffect(() => {
-  //  alert('I am App useEffect and working like componentdidmount');
-  // },[])
+  // const [selectedValue,setInputValue] = useState('mango');
 
-  // //It will be triggered whenever personName or personage value will be changed.
-  // useEffect(() => {
-  //   alert('I am App useEffect and working like componentdidupdate');
-  //  },[personName,personAge]
-  //  )
+  const inputValueRef = React.createRef()
+  const textAreaRef = React.createRef();
+
+  console.log('props-- App.js',props);
+  const myForm = FormBuilder.group({
+    'username': '',
+    'address': '',
+    'isChecked': ['']
+  });
+  
 
    
 
@@ -144,32 +42,77 @@ const App = (props) => {
 
 
 
-  const nameChangeHandler = (event) =>{
-    setPersonName(event.target.value);
-    setPersonAge(27);
+  // const nameChangeHandler = (event) =>{
+  //   setPersonName(event.target.value);
+  //   setPersonAge(27);
+  // }
+
+  // const getInputValue = (event) => {
+  //   setInputValue(event.target.value);
+  // }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('usertypedinput--',inputValueRef.current.value);
+    console.log('usertypedtextarea--',textAreaRef.current.value);
+
   }
- 
+
+  
+  
 
 
   return (
-    <React.Fragment>
-       <h1>My App</h1>
-       <button onClick = {() => {
-         setShowPerson(!showPerson)
-       }}>
-         Click
-       </button>
+   <FieldGroup control = {myForm}
+     render = {({get,invalid}) => (
+        <form onSubmit={handleSubmit}>
+ 
+        <FieldControl
+          name="username"
+          render={({handler}) => (
+            <div>
+              <label>Enter Username</label>
+              <input {...handler()}/>
+            </div>
+          )}
+        />
+
+        <FieldControl
+          name="address"
+          render={({handler}) => (
+            <div>
+                <label>Enter Address</label>
+              <input {...handler()}/>
+            </div>
+          )}
+        />
+          <FieldControl
+                      name="isChecked"
+                      render={({handler}) => (
+                        <div>
+                            <label>Are you Vaccinated</label>
+                          <input {...handler("checkbox")}/>
+                        </div>
+                      )}
+                    />
+                    {
+                    myForm.get('isChecked').value===true ? <div>
+                    <FieldControl
+          name="vaccine"
+          render={({handler}) => (
+            <div>
+                <label>Enter the vaccine name</label>
+              <input {...handler()}/>
+            </div>
+          )}
+        />
+                    </div>: ''}
+                            </form>
+
+     )
+
      
- {showPerson && <div>
-       <Person inputChange={nameChangeHandler} />
-     <p> my person name is {personName} </p>
-      <p>my person age is {personAge}</p>
-    
-    </div>
-}
-
-
-    </React.Fragment>
+     } >
+   </FieldGroup>
    
   )
 }
@@ -181,19 +124,5 @@ const App = (props) => {
 
 export default App;
 
-//Constructor
-//getderivedstatefrom props
-//reender parent
-//render child
-//componentdidmount
 
-//componentdidmount will be called only once
-//whenevr state or prop changes for a component render method is called
-
-//getDerivedStateFromProps
-//shouldComponentUpdate -> true or false
-//render
-//render child
-//getSnapshotBeforeUpdate
-//componentDidUpdate
 

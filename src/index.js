@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRouter, Route} from 'react-router-dom';
+import Person from './Components/Person';
 
 ReactDOM.render(
   <React.StrictMode>
+    <BrowserRouter>
     <App name="alex" age="23" />
     {/* <App  name="maria" age="34" />
     <App name = "john" age="28" >App Html from index</App> */}
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
